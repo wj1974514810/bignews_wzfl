@@ -16,11 +16,17 @@ app.use(jwt({
     path: ['/api/reguser', '/api/login', /^\/uploads\/.*/] // 除了这两个接口，其他都需要认证
 }));
 
+app.use("*", (req, res, next) => {
+    next();
+})
+
 //路由中间件
 const userRouter = require('./router/user_router');
 const articleRouter = require('./router/article_router')
-app.use('/user', userRouter);
+const myRouter = require('./router/myRouter')
+app.use('/api', userRouter);
 app.use('/my', articleRouter);
+app.use('/my', myRouter);
 
 // 错误处理中间件
 app.use((err, req, res, next) => {
@@ -32,8 +38,8 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(6666, () => {
-    console.log("您的服务器已在6666端口就绪");
+app.listen(3000, () => {
+    console.log("您的服务器已在3000端口就绪");
 })
 
 
