@@ -6,7 +6,7 @@ const { Router } = require('express');
 
 router.use(express.urlencoded())
 
-router.get("/article/cates", (req, res) => {
+router.get("/cates", (req, res) => {
     let sqlStr = `select * from categories`;
     conn.query(sqlStr, (err, result) => {
         if (err) {
@@ -25,7 +25,7 @@ router.get("/article/cates", (req, res) => {
     })
 })
 
-router.post('/article/addcates', (req, res) => {
+router.post('/addcates', (req, res) => {
     const { name, slug } = req.body;
     let sqlStr = `insert into categories (name,slug) values ("${name}","${slug}")`
     conn.query(sqlStr, (err, result) => {
@@ -38,7 +38,7 @@ router.post('/article/addcates', (req, res) => {
     })
 })
 
-router.get('/article/deletecate', (req, res) => {
+router.get('/deletecate', (req, res) => {
     const { id } = req.query;
     let sqlStr = `delete from categories where id=${id}`;
     conn.query(sqlStr, (err, result) => {
@@ -53,7 +53,7 @@ router.get('/article/deletecate', (req, res) => {
 })
 
 
-router.get('/article/getCatesById', (req, res) => {
+router.get('/getCatesById', (req, res) => {
     const { id } = req.query;
     let sqlStr = `select * from categories where id=${id}`
     conn.query(sqlStr, (err, result) => {
@@ -67,13 +67,14 @@ router.get('/article/getCatesById', (req, res) => {
 })
 
 
-router.post('/article/updatecate', (req, res) => {
+router.post('/updatecate', (req, res) => {
     const { id, name, slug } = req.body;
     let sqlStr = `update categories set name="${name}",slug="${slug}" where id=${id}`
     conn.query(sqlStr, (err, result) => {
         if (err) {
             console.log(err);
             res.json({ status: 1, msg: '更新文章分类数据失败！' })
+            return
         } else {
             console.log(result);
             res.json({ status: 0, msg: '更新文章分类数据成功！' })

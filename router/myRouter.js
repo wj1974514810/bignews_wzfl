@@ -25,11 +25,12 @@ const upload = multer({ storage })
 router.get('/userinfo', (req, res) => {
     // console.log("获取用户信息：", req.query);
     // const { username } = req.query;
+    // console.log(req);
     const { username } = req.user;
     // console.log(req);
-    console.log(username);
+    // console.log(username);
     let sqlstr = `select * from users where username="${username}"`;
-    console.log(sqlstr);
+    // console.log(sqlstr);
     // if (username) {
     //     sqlstr += ` `
     // }
@@ -42,7 +43,7 @@ router.get('/userinfo', (req, res) => {
             res.json({ status: 1, msg: "获取用户信息失败！" })
             return
         } else {
-            // console.log(result[0]);
+            // console.log(result);
             res.json({ status: 0, msg: "获取用户信息成功！", data: result })
         }
     })
@@ -69,7 +70,9 @@ router.post('/userinfo', (req, res) => {
     let sqlStr = `update users set ${arr} where id=${id}`
     conn.query(sqlStr, (err, result) => {
         if (err) {
+            console.log(err);
             res.json({ status: 1, msg: "更新用户信息失败！" })
+            return
         } else {
             res.json({ status: 0, msg: "更新用户信息成功！" })
         }
@@ -78,36 +81,71 @@ router.post('/userinfo', (req, res) => {
 
 router.post('/uploadPic', upload.single('file_data'), (req, res) => {
     console.log('本次上传的文件是', req.file)
-    res.json({ status: 0, msg: "上传成功", "src": "http://127.0.0.1:6666/uploads/" + req.file.filename })
+    res.json({ status: 0, msg: "上传成功", "src": "http://127.0.0.1:3000/uploads/" + req.file.filename })
 })
 
 
+
+// router.post('/updatepwd', (req, res) => {
+//     // console.log(req.body);
+//     const { id, oldPwd, newPwd } = req.body;
+//     // const { username } = req.user;
+//     console.log(req.user);
+
+//     let sqlSTR = `select * from users where id=${id} and password="${oldPwd}"`;
+//     console.log(sqlSTR);
+//     conn.query(sqlSTR, (err, result) => {
+//         if (err) {
+//             res.json({ status: 1, msg: "获取原密码失败！" })
+//         }
+//         console.log(result);
+//         if (result.length > 0) {
+//             let sqlStr = `update users set password="${newPwd}" where id=${id}`;
+//             console.log(oldPwd);
+//             conn.query(sqlStr, (err, result) => {
+//                 if (err) {
+//                     res.json({ status: 1, msg: "修改密码失败！" })
+//                 } else {
+//                     // console.log(result);
+//                     res.json({ status: 0, msg: "修改原密码成功！" })
+//                 }
+//             })
+//         } else {
+//             res.json({ status: 1, msg: "修改密码失败！" })
+//         }
+//     })
+// })
+
+
+
 router.post('/updatepwd', (req, res) => {
-    console.log(req.body);
-    const { id, oldPwd, newPwd } = req.body;
-    let sqlSTR = `select * from users where id=${id} and password="${oldPwd}"`;
-    conn.query(sqlSTR, (err, result) => {
-        if (err) {
-            res.json({ status: 1, msg: "获取原密码失败！" })
-        }
+    console.log(req);
+    console.log('接受到的参数是', req.body);
+    const { oldPwd, newPwd, id } = req.body;
+    const sqlStrSelect = `select password from users where id=${id}`;
+    conn.query(sqlStrSelect, (err, result) => {
         console.log(result);
-        if (result.length > 0) {
-            let sqlStr = `update users set password="${newPwd}" where id=${id}`;
-            console.log(oldPwd);
-            conn.query(sqlStr, (err, result) => {
-                if (err) {
-                    res.json({ status: 1, msg: "修改密码失败！" })
-                } else {
-                    // console.log(result);
-                    res.json({ status: 0, msg: "修改原密码成功！" })
-                }
-            })
-        } else {
-            res.json({ status: 1, msg: "修改密码失败！" })
+        if (err) {
+            console.log(err);
+            res.json({ status: 500, message: '服务器错误' })
+            return
         }
-
-
+        if (result[0].password !== oldPwd) {
+            res.json({ status: 1, message: '旧密码输入错误' })
+            return
+        }
+        const sqlStr = `update users set password=${newPwd} where id=${id}`;
+        conn.query(sqlStr, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.json({ status: 500, message: '服务器错误' })
+                return
+            }
+            res.json({ status: 0, message: '修改密码成功', })
+        })
     })
+
+
 })
 
 

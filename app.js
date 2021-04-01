@@ -13,20 +13,16 @@ app.use(jwt({
     secret: 'gz61', // 生成token时的 钥匙，必须统一
     algorithms: ['HS256'] // 必填，加密算法，无需了解
 }).unless({
-    path: ['/api/reguser', '/api/login', /^\/uploads\/.*/] // 除了这两个接口，其他都需要认证
+    path: ['/api/reguser', "/my/article/list", '/api/login', /^\/uploads\/.*/] // 除了这两个接口，其他都需要认证
 }));
 
-app.use("*", (req, res, next) => {
-    next();
-})
 
-//路由中间件
-const userRouter = require('./router/user_router');
-const articleRouter = require('./router/article_router')
-const myRouter = require('./router/myRouter')
-app.use('/api', userRouter);
-app.use('/my', articleRouter);
-app.use('/my', myRouter);
+//监听所有   
+// app.use("*", (req, res, next) => {
+//     next();
+// })
+
+
 
 // 错误处理中间件
 app.use((err, req, res, next) => {
@@ -37,6 +33,15 @@ app.use((err, req, res, next) => {
     }
 });
 
+//路由中间件
+const userRouter = require('./router/user_router');
+const articleRouter = require('./router/article_router')
+const myRouter = require('./router/myRouter')
+const wzlbRouter = require('./router/wzlb_router')
+app.use('/article', articleRouter);
+app.use('/my', myRouter);
+app.use('/api', userRouter);
+app.use('/my/article', wzlbRouter)
 
 app.listen(3000, () => {
     console.log("您的服务器已在3000端口就绪");
