@@ -13,7 +13,7 @@ app.use(jwt({
     secret: 'gz61', // 生成token时的 钥匙，必须统一
     algorithms: ['HS256'] // 必填，加密算法，无需了解
 }).unless({
-    path: ['/api/reguser', "/my/article/list", '/api/login', /^\/uploads\/.*/] // 除了这两个接口，其他都需要认证
+    path: ['/api/reguser', '/api/login', /^\/uploads\/.*/] // 除了这两个接口，其他都需要认证
 }));
 
 

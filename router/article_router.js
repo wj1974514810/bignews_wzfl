@@ -15,7 +15,7 @@ router.get("/cates", (req, res) => {
                 "message": "获取文章分类列表失败！",
             })
         } else {
-            console.log(result);
+            // console.log(result);
             res.json({
                 "status": 0,
                 "message": "获取文章分类列表成功！",
